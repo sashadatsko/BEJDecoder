@@ -1,4 +1,7 @@
 .DS_Store
 .vscode/
 main.dSYM/
+bejdecoder.dSYM/
 main
+bejdecoder
+trash.c

@@ -5,6 +5,7 @@ EXE = bejdecoder
 
 $(EXE): $(SRC)
 	$(CC) $(CFLAGS) $^ -o $@
+	./$(EXE) example/memory.dict example/memory.bin
 
 clean:
 	rm -f $(EXE)

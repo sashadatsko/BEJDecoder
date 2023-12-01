@@ -1,0 +1,204 @@
+\doxysection{bej\+\_\+decoder.\+c}
+\hypertarget{bej__decoder_8c_source}{}\label{bej__decoder_8c_source}\index{/Users/sashadatsko/Desktop/Global/BEJParser/src/bej\_decoder.c@{/Users/sashadatsko/Desktop/Global/BEJParser/src/bej\_decoder.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}../include/bej\_decoder.h"{}}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00003}00003\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00006}00006\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00007}00007\ \textcolor{preprocessor}{\#define\ NAME\_MAX\ 255\ }\textcolor{comment}{//\ Max\ JSON\ key\ and\ BEJ\ string\ length.}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00009}00009\ \textcolor{keyword}{enum}\ BEJType}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00010}00010\ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00011}00011\ \ \ \ \ BEJ\_SET\ =\ 0,}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00012}00012\ \ \ \ \ BEJ\_ARRAY\ =\ 1,}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00013}00013\ \ \ \ \ BEJ\_INTEGER\ =\ 3,}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00014}00014\ \ \ \ \ BEJ\_STRING\ =\ 5,}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00015}00015\ \ \ \ \ BEJ\_BOOLEAN\ =\ 7,}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00016}00016\ \};}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00018}\mbox{\hyperlink{struct_dict_entry}{00018}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_dict_entry}{DictEntry}}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00019}00019\ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00020}00020\ \ \ \ \ uint8\_t\ format;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00021}00021\ \ \ \ \ uint16\_t\ seqNum;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00022}00022\ \ \ \ \ uint16\_t\ childPointerOffset;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00023}00023\ \ \ \ \ uint16\_t\ childCount;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00024}00024\ \ \ \ \ uint8\_t\ nameLength;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00025}00025\ \ \ \ \ uint16\_t\ nameOffset;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00026}00026\ \}\ \mbox{\hyperlink{struct_dict_entry}{DictEntry}};}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00027}00027\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00028}00028\ \textcolor{keywordtype}{size\_t}\ fileSize(FILE\ *fp)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00029}00029\ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00030}00030\ \ \ \ \ \textcolor{keywordtype}{long}\ prevOfsset\ =\ ftell(fp);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00031}00031\ \ \ \ \ fseek(fp,\ 0,\ SEEK\_END);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00032}00032\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ fsize\ =\ ftell(fp);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00033}00033\ \ \ \ \ fseek(fp,\ prevOfsset,\ SEEK\_SET);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00034}00034\ \ \ \ \ \textcolor{keywordflow}{return}\ fsize;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00035}00035\ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00036}00036\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00037}00037\ uint64\_t\ decodeNNInt(FILE\ *fp)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00038}00038\ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00039}00039\ \ \ \ \ uint64\_t\ value\ =\ 0,\ bytes;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00040}00040\ \ \ \ \ bytes\ =\ fgetc(fp);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00041}00041\ \ \ \ \ fread(\&value,\ bytes,\ 1,\ fp);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00042}00042\ \ \ \ \ \textcolor{keywordflow}{return}\ value;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00043}00043\ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00045}00045\ \mbox{\hyperlink{struct_dict_entry}{DictEntry}}\ *loadDictSubset(FILE\ *dictStream,\ uint16\_t\ childOffset,\ uint16\_t\ childCount)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00046}00046\ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00047}00047\ \ \ \ \ \mbox{\hyperlink{struct_dict_entry}{DictEntry}}\ *dictSubset\ =\ (\mbox{\hyperlink{struct_dict_entry}{DictEntry}}\ *)malloc(childCount\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{struct_dict_entry}{DictEntry}}));}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00048}00048\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00049}00049\ \ \ \ \ \textcolor{keywordflow}{if}\ (childOffset)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00050}00050\ \ \ \ \ \ \ \ \ fseek(dictStream,\ childOffset,\ SEEK\_SET);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00052}00052\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ i\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00053}00053\ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00054}00054\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00055}00055\ \ \ \ \ \ \ \ \ uint8\_t\ dictEntry[10];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00056}00056\ \ \ \ \ \ \ \ \ fread(dictEntry,\ \textcolor{keyword}{sizeof}(dictEntry),\ 1,\ dictStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00057}00057\ \ \ \ \ \ \ \ \ (dictSubset\ +\ i)-\/>format\ =\ dictEntry[0];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00058}00058\ \ \ \ \ \ \ \ \ (dictSubset\ +\ i)-\/>seqNum\ =\ *(uint16\_t\ *)(dictEntry\ +\ 1);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00059}00059\ \ \ \ \ \ \ \ \ (dictSubset\ +\ i)-\/>childPointerOffset\ =\ *(uint16\_t\ *)(dictEntry\ +\ 3);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00060}00060\ \ \ \ \ \ \ \ \ (dictSubset\ +\ i)-\/>childCount\ =\ *(uint16\_t\ *)(dictEntry\ +\ 5);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00061}00061\ \ \ \ \ \ \ \ \ (dictSubset\ +\ i)-\/>nameLength\ =\ dictEntry[7];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00062}00062\ \ \ \ \ \ \ \ \ (dictSubset\ +\ i)-\/>nameOffset\ =\ *(uint16\_t\ *)(dictEntry\ +\ 8);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00063}00063\ \ \ \ \ \ \ \ \ i++;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00064}00064\ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (i\ <\ childCount\ \&\&\ childCount\ !=\ 0);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00066}00066\ \ \ \ \ \textcolor{keywordflow}{return}\ dictSubset;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00067}00067\ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00069}00069\ \mbox{\hyperlink{struct_dict_entry}{DictEntry}}\ decodeDictEntry(FILE\ *dictStream,\ \mbox{\hyperlink{struct_dict_entry}{DictEntry}}\ *dictSubset,\ \textcolor{keywordtype}{size\_t}\ subsetSize,\ uint64\_t\ seq,\ \textcolor{keywordtype}{char}\ *keyName)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00070}00070\ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00071}00071\ \ \ \ \ \textcolor{keywordflow}{if}\ (seq\ >\ subsetSize)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00072}00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{struct_dict_entry}{DictEntry}})\{\};}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00073}00073\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00074}00074\ \ \ \ \ fseek(dictStream,\ dictSubset[seq].nameOffset,\ SEEK\_SET);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00075}00075\ \ \ \ \ fread(keyName,\ dictSubset[seq].nameLength,\ 1,\ dictStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00076}00076\ \ \ \ \ \textcolor{keywordflow}{return}\ dictSubset[seq];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00077}00077\ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00078}00078\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00079}00079\ \textcolor{keywordtype}{void}\ decodeTuple(FILE\ *dictStream,\ FILE\ *bejStream,\ FILE\ *jsonStream,\ \textcolor{keywordtype}{int}\ writeKeyName,\ \textcolor{keywordtype}{size\_t}\ bejStreamSize,}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ objCount,\ \mbox{\hyperlink{struct_dict_entry}{DictEntry}}\ *dictSubset,\ \textcolor{keywordtype}{size\_t}\ subsetSize)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00081}00081\ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00082}00082\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ currObj\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00083}00083\ \ \ \ \ \textcolor{keywordflow}{while}\ ((\textcolor{keywordtype}{size\_t})ftell(bejStream)\ <\ bejStreamSize\ \&\&\ currObj\ <\ objCount)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00084}00084\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00085}00085\ \ \ \ \ \ \ \ \ uint64\_t\ sequence\ =\ decodeNNInt(bejStream)\ >>\ 1;\ \textcolor{comment}{//\ Skip\ annotation\ dictionary}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00086}00086\ \ \ \ \ \ \ \ \ uint8\_t\ format\ =\ fgetc(bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00087}00087\ \ \ \ \ \ \ \ \ uint64\_t\ length\ =\ decodeNNInt(bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00088}00088\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00089}00089\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ keyName[NAME\_MAX];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00090}00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_dict_entry}{DictEntry}}\ entry\ =\ decodeDictEntry(dictStream,\ dictSubset,\ subsetSize,\ sequence,\ keyName);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00091}00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (writeKeyName)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00092}00092\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(jsonStream,\ \textcolor{stringliteral}{"{}\(\backslash\)"{}\%s\(\backslash\)"{}:"{}},\ keyName);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00093}00093\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00094}00094\ \ \ \ \ \ \ \ \ uint8\_t\ formatType\ =\ format\ >>\ 4;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00095}00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (formatType\ ==\ BEJ\_SET)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00096}00096\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00097}00097\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ elemCount\ =\ decodeNNInt(bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00098}00098\ \ \ \ \ \ \ \ \ \ \ \ \ fputc(\textcolor{charliteral}{'\{'},\ jsonStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00099}00099\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_dict_entry}{DictEntry}}\ *newDictSubset\ =\ loadDictSubset(dictStream,\ entry.childPointerOffset,\ entry.childCount);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00100}00100\ \ \ \ \ \ \ \ \ \ \ \ \ decodeTuple(dictStream,\ bejStream,\ jsonStream,\ 1,\ bejStreamSize,\ elemCount,\ newDictSubset,\ entry.childCount);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00101}00101\ \ \ \ \ \ \ \ \ \ \ \ \ fputc(\textcolor{charliteral}{'\}'},\ jsonStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00102}00102\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00103}00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (formatType\ ==\ BEJ\_ARRAY)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00104}00104\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00105}00105\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ elemCount\ =\ decodeNNInt(bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00106}00106\ \ \ \ \ \ \ \ \ \ \ \ \ fputc(\textcolor{charliteral}{'['},\ jsonStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00107}00107\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ elemCount;\ i++)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00108}00108\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00109}00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_dict_entry}{DictEntry}}\ *newDictSubset\ =\ loadDictSubset(dictStream,\ entry.childPointerOffset,\ entry.childCount);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00110}00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ decodeTuple(dictStream,\ bejStream,\ jsonStream,\ 0,\ bejStreamSize,\ 1,\ newDictSubset,\ entry.childCount);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00111}00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <\ elemCount\ -\/\ 1)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00112}00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fputc(\textcolor{charliteral}{','},\ jsonStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00113}00113\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00114}00114\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00115}00115\ \ \ \ \ \ \ \ \ \ \ \ \ fputc(\textcolor{charliteral}{']'},\ jsonStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00116}00116\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00117}00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (formatType\ ==\ BEJ\_INTEGER)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00118}00118\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00119}00119\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ intValue\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00120}00120\ \ \ \ \ \ \ \ \ \ \ \ \ fread(\&intValue,\ length,\ 1,\ bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00121}00121\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(jsonStream,\ \textcolor{stringliteral}{"{}\%d"{}},\ intValue);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00122}00122\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00123}00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (formatType\ ==\ BEJ\_STRING)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00124}00124\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00125}00125\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ stringValue[NAME\_MAX];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ fread(stringValue,\ length,\ 1,\ bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00127}00127\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(jsonStream,\ \textcolor{stringliteral}{"{}\(\backslash\)"{}\%s\(\backslash\)"{}"{}},\ stringValue);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00128}00128\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00129}00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (formatType\ ==\ BEJ\_BOOLEAN)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00130}00130\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00131}00131\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ boolValue\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00132}00132\ \ \ \ \ \ \ \ \ \ \ \ \ fread(\&boolValue,\ length,\ 1,\ bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00133}00133\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(jsonStream,\ \textcolor{stringliteral}{"{}\%s"{}},\ boolValue\ ?\ \textcolor{stringliteral}{"{}true"{}}\ :\ \textcolor{stringliteral}{"{}false"{}});}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00134}00134\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00135}00135\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00136}00136\ \ \ \ \ \ \ \ \ \ \ \ \ fseek(bejStream,\ length,\ SEEK\_CUR);\ \textcolor{comment}{//\ Skip\ other\ values}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00137}00137\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00138}00138\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00139}00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (currObj++\ <\ objCount\ -\/\ 1)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00140}00140\ \ \ \ \ \ \ \ \ \ \ \ \ fputc(\textcolor{charliteral}{','},\ jsonStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00141}00141\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00142}00142\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00143}00143\ \ \ \ \ free(dictSubset);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00144}00144\ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00145}00145\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00146}00146\ \textcolor{keywordtype}{int}\ bejDecode(\textcolor{keywordtype}{char}\ *dictionary,\ \textcolor{keywordtype}{char}\ **bejFiles,\ \textcolor{keywordtype}{size\_t}\ fileCount)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00147}00147\ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00148}00148\ \ \ \ \ FILE\ *dictStream\ =\ fopen(dictionary,\ \textcolor{stringliteral}{"{}rb"{}});}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00149}00149\ \ \ \ \ \textcolor{keywordflow}{if}\ (!dictStream)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00150}00150\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00151}00151\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Failed\ to\ open\ \%s\(\backslash\)n"{}},\ dictionary);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00152}00152\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00153}00153\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00154}00154\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00155}00155\ \ \ \ \ uint8\_t\ dictHeader[12];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00156}00156\ \ \ \ \ fread(dictHeader,\ \textcolor{keyword}{sizeof}(dictHeader),\ 1,\ dictStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00157}00157\ \ \ \ \ uint8\_t\ versionTag\ =\ dictHeader[0];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00158}00158\ \ \ \ \ uint16\_t\ entryCount\ =\ *(uint16\_t\ *)(dictHeader\ +\ 2);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00159}00159\ \ \ \ \ \textcolor{keywordflow}{if}\ (versionTag\ !=\ 0x00\ ||\ entryCount\ <\ 1)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00160}00160\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00161}00161\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Wrong\ dictionary\ format\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00162}00162\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00163}00163\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00164}00164\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00165}00165\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ fileCount;\ i++)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00166}00166\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00167}00167\ \ \ \ \ \ \ \ \ FILE\ *bejStream\ =\ fopen(bejFiles[i],\ \textcolor{stringliteral}{"{}rb"{}});}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00168}00168\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!bejStream)}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00169}00169\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00170}00170\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Failed\ to\ open\ \%s\(\backslash\)n"{}},\ bejFiles[i]);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00171}00171\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00172}00172\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00173}00173\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00174}00174\ \ \ \ \ \ \ \ \ uint8\_t\ bejHeader[7];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00175}00175\ \ \ \ \ \ \ \ \ fread(bejHeader,\ \textcolor{keyword}{sizeof}(bejHeader),\ 1,\ bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00176}00176\ \ \ \ \ \ \ \ \ uint32\_t\ version\ =\ *(uint32\_t\ *)bejHeader;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00177}00177\ \ \ \ \ \ \ \ \ uint8\_t\ schemaClass\ =\ bejHeader[6];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00178}00178\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((version\ !=\ 0xF1F0F000\ \&\&\ version\ !=\ 0xF1F1F000)\ ||\ schemaClass\ !=\ 0x00)\ \textcolor{comment}{//\ Decode\ only\ MAJOR\ schema}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00179}00179\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00180}00180\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Wrong\ BEJ\ format\ in\ \%s\(\backslash\)n"{}},\ bejFiles[i]);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00181}00181\ \ \ \ \ \ \ \ \ \ \ \ \ fclose(bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00182}00182\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00183}00183\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00184}00184\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00185}00185\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ fileName[NAME\_MAX];}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00186}00186\ \ \ \ \ \ \ \ \ snprintf(fileName,\ NAME\_MAX,\ \textcolor{stringliteral}{"{}\%s.json"{}},\ bejFiles[i]);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00187}00187\ \ \ \ \ \ \ \ \ FILE\ *jsonStream\ =\ fopen(fileName,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00188}00188\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00189}00189\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bejSize\ =\ fileSize(bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00190}00190\ \ \ \ \ \ \ \ \ decodeTuple(dictStream,\ bejStream,\ jsonStream,\ 0,\ bejSize,\ 1,\ loadDictSubset(dictStream,\ 0,\ 0),\ 1);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00191}00191\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00192}00192\ \ \ \ \ \ \ \ \ fclose(jsonStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00193}00193\ \ \ \ \ \ \ \ \ fclose(bejStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00194}00194\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00195}00195\ }
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00196}00196\ \ \ \ \ fclose(dictStream);}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00197}00197\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{bej__decoder_8c_source_l00198}00198\ \}}
+
+\end{DoxyCode}

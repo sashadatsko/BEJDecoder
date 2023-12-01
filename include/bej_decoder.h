@@ -3,7 +3,8 @@
 #include <stddef.h>
 
 /**
- * \brief Decodes BEJ to JSON.
+ *  @mainpage
+ * \brief Decodes BEJ to JSON. Supported types: array, set, integer, string, boolean
  *
  * \param dictionary Primary dictionary file.
  * \param bejFiles Input BEJ files.
